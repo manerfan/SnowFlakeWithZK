@@ -1,0 +1,117 @@
+buildscript {
+    ext {
+        kotlin_version = '1.2.0'
+        cglib_version = "3.2.6"
+        springBootVersion = '2.0.3.RELEASE'
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            name 'aliyun maven central'
+            url 'http://maven.aliyun.com/nexus/content/groups/public'
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlin_version}")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+group 'com.manerfan'
+version '1.0.0'
+
+apply plugin: 'idea'
+
+idea {
+    project {
+        languageLevel = '1.8'
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-spring'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        name 'aliyun maven central'
+        url 'http://maven.aliyun.com/nexus/content/groups/public'
+    }
+}
+
+configurations {
+    all*.exclude module: 'spring-boot-starter-tomcat'
+    all*.exclude module: 'spring-boot-starter-logging'
+    all*.exclude module: 'slf4j-log4j12'
+    all*.exclude module: 'logback-core'
+    all*.exclude module: 'log4j'
+}
+
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+bootJar {
+    launchScript()
+}
+
+dependencies {
+    /* kotlin */
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    api "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.2"
+
+    /* spring */
+    implementation "org.springframework.boot:spring-boot-devtools"
+    api "org.springframework.boot:spring-boot-starter-web"
+    api "org.springframework.boot:spring-boot-starter-undertow"
+    api "org.springframework.boot:spring-boot-starter-actuator"
+    api "org.springframework.boot:spring-boot-starter-log4j2"
+    api "org.springframework.boot:spring-boot-starter-aop"
+
+    api "org.apache.curator:curator-recipes:2.12.0"
+
+    api "cglib:cglib-nodep:$cglib_version"
+
+    /* test */
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "junit:junit:4.12"
+}
+
+build {
+    doLast {
+        file("./build/libs/${jar.baseName}-${jar.version}.jar").renameTo("./build/libs/${jar.baseName}.jar")
+        file("./build/libs/${jar.baseName}-${jar.version}.jar.original").delete()
+        copy {
+            from "./springboot.conf"
+            into "./build/libs"
+            rename {
+                "${jar.baseName}.conf"
+            }
+        }
+    }
+}
+
+task distributeZip(type: Zip) {
+    from("./build/libs")
+}
+
+build.finalizedBy distributeZip

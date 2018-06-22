@@ -1,0 +1,21 @@
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  application:
+    name: snow-flake
+  main:
+    banner-mode: log
+
+logging:
+  config: classpath:log4j2.xml
+
+server:
+  port: 8089
+
+machineId:
+  dataCenterId: 16 # 0~31
+  workerId: 5 # 0~31 when zookeeper.enable is false
+
+zookeeper:
+  enable: false # true: cluster mode | false: singleton mode
+  url: "localhost:2181" # when zookeeper.enable is true

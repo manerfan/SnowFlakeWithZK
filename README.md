@@ -6,7 +6,7 @@ SnowFlake with Zookeeper in Kotlin
 
 ## 安装
 
-下载并解压
+下载并解压 [SnowFlakeWithZK-1.0.0.zip](https://github.com/manerfan/SnowFlakeWithZK/releases/download/v1.0.0/SnowFlakeWithZK-1.0.0.zip)
 
 进入解压目录并执行
 `./SnowFlakeWithZK.jar start`

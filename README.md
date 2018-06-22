@@ -19,6 +19,10 @@ GET http(s)://[host]:[port]/api/next/hex    以十六进制返回
 
 GET http(s)://[host]:[port]/api/next/bin    以二进制返回
 
+GET http(s)://[host]:[port]/api/parse/long/{id}    解析长整型id
+
+GET http(s)://[host]:[port]/api/parse/hex/{id}     解析十六进制id
+
 ## 单机使用
 
 修改SnowFlakeWithZK.conf中RUN_ARGS参数，新增`--zookeeper.enable=false`

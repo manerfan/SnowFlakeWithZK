@@ -18,10 +18,14 @@ class IdWorkerController {
     private lateinit var idWorker: IdWorker
 
     @GetMapping("/long")
-    fun nextLong(): Map<String, Any> = mapOf(
-            "code" to 200,
-            "next" to idWorker.nextId()
-    )
+    fun nextLong(): Map<String, Any> {
+        val result = mapOf(
+                "code" to 200,
+                "next" to idWorker.nextId()
+        )
+
+        return result
+    }
 
     @GetMapping("/hex")
     fun nextHex(): Map<String, Any> = mapOf(
@@ -33,6 +37,25 @@ class IdWorkerController {
     fun nextBin(): Map<String, Any> = mapOf(
             "code" to 200,
             "next" to idWorker.nextIdBin()
+    )
+}
+
+@RestController
+@RequestMapping("/api/parse")
+class IdWorkerParseController {
+    @Autowired
+    private lateinit var idWorker: IdWorker
+
+    @GetMapping("/long/{id}")
+    fun parseLong(@PathVariable id: Long): Map<String, Any> = mapOf(
+            "code" to 200,
+            "worker" to idWorker.parseId(id)
+    )
+
+    @GetMapping("/hex/{id}")
+    fun parseHex(@PathVariable id: String): Map<String, Any> = mapOf(
+            "code" to 200,
+            "worker" to idWorker.parseId(id)
     )
 }
 

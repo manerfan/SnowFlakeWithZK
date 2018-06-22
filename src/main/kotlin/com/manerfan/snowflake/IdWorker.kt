@@ -62,14 +62,14 @@ class IdWorker(var workerId: Long, val dataCenterId: Long) {
 
         lastTimestamp = currTimeMillis
 
-        return (((currTimeMillis - twepoch) and timestampMask) shl timestampShift) or
+        val long = (((currTimeMillis - twepoch) and timestampMask) shl timestampShift) or
                 (dataCenterId shl dataCenterIdShift) or
                 (workerId shl workerIdShift) or
                 sequence
+        println(long)
+        println(long.toString(16).padStart(16, '0'))
+        return long
     }
-
-    fun nextIdHex() = nextId().toString(16).padStart(16, '0')
-    fun nextIdBin() = nextId().toString(2).padStart(64, '0')
 
     private fun tilNextMillis(lastTimestamp: Long): Long {
         var timestamp = System.currentTimeMillis()
@@ -79,4 +79,17 @@ class IdWorker(var workerId: Long, val dataCenterId: Long) {
         return timestamp
     }
 
+    fun nextIdHex() = nextId().toString(16).padStart(16, '0')
+    fun nextIdBin() = nextId().toString(2).padStart(64, '0')
+
+    fun parseId(id: Long) = Worker(
+            ((id ushr timestampShift) and timestampMask) + twepoch,
+            (id ushr workerIdShift) and maxWorkerId,
+            (id ushr dataCenterIdShift)  and maxDataCenterId,
+            id and sequenceMask
+    )
+
+    fun parseId(hex: String) = parseId(hex.toLong(16))
+
+    data class Worker(val timestamp: Long, val workId: Long, val dataCenterId: Long, val sequence: Long)
 }
